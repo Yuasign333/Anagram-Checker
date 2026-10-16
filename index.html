@@ -69,8 +69,9 @@ margin:0 auto; text-align:center;" onsubmit="return checkAnagram()">
                 document.getElementById("display").innerHTML = "<p style='color:#e74c3c;'>Special characters are not allowed.</p>";
                 return false;
             }
-
-            var cleanedFirst = Firstword.toLowerCase().trim().replace(/\s+/g, " ");
+            
+        
+            var cleanedFirst = Firstword.toLowerCase().trim().replace(/\s+/g, " "); // Collapses multiple consecutive spaces down to a single space
             var cleanedSecond = Secondword.toLowerCase().trim().replace(/\s+/g, " ");
 
             // Initialize counters at 0 to check first and second word vowels and consonants
