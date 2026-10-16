@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Anagram Checker</title>
+</head>
+
+<body style="font-family: 'Poppins', sans-serif; line-height:1.8; max-width:900px;
+margin:40px auto; background-color:#f4f4f4; text-align:center; padding:0 20px;">
+
+    <h1 style="color:#32CD32;"> Anagram Checker</h1>
+
+    <!--Using Form for user Input-->
+
+    <form style="background-color:white; padding:20px; border-radius:8px; max-width:600px;
+margin:0 auto; text-align:center;" onsubmit="return checkAnagram()">
+
+        <h3 style="color:#32CD32;">Enter Words</h3>
+
+        <!--First word field, id used by JS to read its value-->
+        <b style="color:#00b300;"> First Word: </b>
+        <input type="text" id="FirstwordInput" style="width:50%; padding:8px;">
+        <br><br><hr><br>
+
+        <!--Second word field, id used by JS to read its value-->
+        <b style="color:#00b300;">Second Word: </b>
+        <input type="text" id="SecondwordInput" style="width:50%; padding:8px;">
+        <br><br><hr><br>
+
+        <!--Submit triggers checkAnagram() through the form's onsubmit-->
+        <input type="submit" value="Check" style="background-color:#90EE90; color: white; padding: 10px 15px; border: none; border-radius: 4px; width: 49%; cursor: pointer;">
+
+        <!--Reset clears the inputs, onclick also clears the result box-->
+        <input type="reset" value="Clear" onclick="document.getElementById('display').innerHTML=''"
+               style="background-color:#95a5a6; color:white; padding:10px 15px; border:none;
+    border-radius:4px; width:49%; cursor:pointer;">
+
+    </form>
+
+    <!--Empty container where JS prints the result via innerHTML-->
+    <div id="display" style="max-width:600px; margin:20px auto; font-size:1.2em;"></div>
+
+    <script>
+    // javascript
+
+        function checkAnagram() {
+            // get the word from the id
+            var Firstword = document.getElementById("FirstwordInput").value;
+            var Secondword = document.getElementById("SecondwordInput").value;
+
+            var specialCharPattern = /[^a-zA-Z0-9 ]/;
+
+            // Input validation: block empty input
+            if (Firstword.trim() === "") {
+                document.getElementById("display").innerHTML = "<p style='color:#e74c3c;'>Please enter first word.</p>";
+                return false;
+            }
+            else if (specialCharPattern.test(Firstword)) {
+                document.getElementById("display").innerHTML = "<p style='color:#e74c3c;'>Special characters are not allowed.</p>";
+                return false;
+            }
+
+            // Input validation: block empty input
+            if (Secondword.trim() === "") {
+                document.getElementById("display").innerHTML = "<p style='color:#e74c3c;'>Please enter second word.</p>";
+                return false;
+            }
+            else if (specialCharPattern.test(Secondword)) {
+                document.getElementById("display").innerHTML = "<p style='color:#e74c3c;'>Special characters are not allowed.</p>";
+                return false;
+            }
+
+            var cleanedFirst = Firstword.toLowerCase().trim().replace(/\s+/g, " ");
+            var cleanedSecond = Secondword.toLowerCase().trim().replace(/\s+/g, " ");
+
+            // Initialize counters at 0 to check first and second word vowels and consonants
+            var firstVowels = 0;
+            var firstConsonants = 0;
+            var secondVowels = 0;
+            var secondConsonants = 0;
+
+            //Count Vowels & Consonants for the FIRST word
+            for (var i = 0; i < cleanedFirst.length; i++) {
+                var char = cleanedFirst.charAt(i);
+
+                if ("aeiou".includes(char)) {
+                    firstVowels++;
+                }
+
+                else if (char >= 'a' && char <= 'z') {
+                    firstConsonants++;
+                }
+            }
+
+            //Count Vowels & Consonants for the SECOND word
+            for (var j = 0; j < cleanedSecond.length; j++) {
+                var char = cleanedSecond.charAt(j);
+
+                if ("aeiou".includes(char)) {
+                    secondVowels++;
+                }
+
+                else if (char >= 'a' && char <= 'z') {
+                    secondConsonants++;
+                }
+            }
+
+            // ANAGRAM CHECK: count how many times each letter a-z AND digit 0-9 appears
+
+            var letterCount = [];
+
+            for (var k = 0; k < 36; k++) {
+                letterCount[k] = 0;
+            }
+
+            // add 1 for each letter/digit found in the first word
+
+            for (var i = 0; i < cleanedFirst.length; i++) {
+                var char = cleanedFirst.charAt(i);
+
+                if (char >= 'a' && char <= 'z') {
+                    var index = char.charCodeAt(0) - 97;  // 'a'-'z' -> 0-25
+                    letterCount[index]++;
+                }
+
+                else if (char >= '0' && char <= '9') {
+                    var index = char.charCodeAt(0) - 48 + 26;  // '0'-'9' -> 26-35
+                    letterCount[index]++;
+                }
+            }
+
+            // subtract 1 for each letter/digit found in the second word
+
+            for (var j = 0; j < cleanedSecond.length; j++) {
+                var char = cleanedSecond.charAt(j);
+
+                if (char >= 'a' && char <= 'z') {
+                    var index = char.charCodeAt(0) - 97;
+                    letterCount[index]--;
+                }
+
+                else if (char >= '0' && char <= '9') {
+                    var index = char.charCodeAt(0) - 48 + 26;
+                    letterCount[index]--;
+                }
+            }
+
+            // if every count is back to 0, letters and digits match exactly
+            var isAnagram = true;
+            for (var m = 0; m < 36; m++) {
+                if (letterCount[m] !== 0) {
+                    isAnagram = false;
+                }
+            }
+
+            var remarks = "";
+
+            if (cleanedFirst === cleanedSecond) // I want the system to treat same words input invalid
+            {
+                remarks = "Same word entered - not a meaningful anagram comparison.";
+            }
+            else if (isAnagram) {
+                remarks = "These words ARE anagrams of each other.";
+            }
+            else {
+                remarks = "These words are NOT anagrams of each other.";
+            }
+
+            //display
+            document.getElementById("display").innerHTML =
+                "<div style='background-color:#f0fff0; padding:20px; border-radius:8px; border:2px solid #90EE90;'>" +
+                "<p style='color:#2e8b2e;'><b>First Word Stats:</b> Vowels: " + firstVowels + " | Consonants: " + firstConsonants + " | Length: " + cleanedFirst.length + "</p>" +
+                "<p style='color:#2e8b2e;'><b>Second Word Stats:</b> Vowels: " + secondVowels + " | Consonants: " + secondConsonants + " | Length: " + cleanedSecond.length + "</p>" +
+                "<p style='color:#006400; font-size:1.2em;'><b>Result:</b> " + remarks + "</p>" +
+                "</div>";
+
+
+            // prevent page reload
+            return false;
+        }
+    </script>
+
+</body>
+</html>
